@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: "**/*.md"
+
+  check:
+    name: Type-check and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        working-directory: apps/viewer
+        run: npm install
+      - name: Type-check
+        working-directory: apps/viewer
+        run: |
+          if npm run 2>&1 | grep -qE "^[[:space:]]+check"; then
+            npm run check
+          else
+            echo "No check script; skipping."
+          fi
+      - name: Test
+        working-directory: apps/viewer
+        run: npm test --if-present
