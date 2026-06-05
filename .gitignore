@@ -1,0 +1,4 @@
+apps/viewer/node_modules/
+apps/viewer/.svelte-kit/
+apps/viewer/build/
+.DS_Store
